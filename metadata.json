@@ -1,0 +1,5 @@
+{
+  "name": "ArcTern Chip Topology Explorer",
+  "description": "Interactive market map for Chip Topologies, analyzing Interconnects, Advanced Packaging, and Optical I/O for ArcTern Ventures.",
+  "requestFramePermissions": []
+}
