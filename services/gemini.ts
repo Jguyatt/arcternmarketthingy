@@ -109,13 +109,15 @@ Formatting requirements:
 - No markdown headers (no #, ##, ###, etc.)
 - No em dashes or special formatting characters
 - Write in clear, professional language
-- Provide substantial detail (aim for 400-600 words)
-- Structure: overview paragraph, then detailed points, then conclusion if needed
+- Provide substantial detail (aim for 500-800 words)
+- Structure: overview paragraph, then detailed points, then conclusion paragraph
+- Always end your response with a complete sentence that ends in a period
+- Ensure the response is complete and not cut off mid-sentence
 
-Provide a thorough, informative answer that gives real value and insight.`,
+Provide a thorough, informative answer that gives real value and insight. Make sure to complete your full thought and end properly.`,
     config: {
       tools: [{ googleSearch: {} }],
-      maxOutputTokens: 1500,
+      maxOutputTokens: 3000,
     },
   });
 
@@ -209,12 +211,14 @@ Formatting requirements:
 - No markdown headers (no #, ##, ###, etc.)
 - No em dashes or special formatting characters
 - Write in clear, professional language
-- Provide substantial detail (aim for 400-600 words)
-- Structure: overview paragraph, then detailed points, then conclusion if needed
+- Provide substantial detail (aim for 500-800 words)
+- Structure: overview paragraph, then detailed points, then conclusion paragraph
+- Always end your response with a complete sentence that ends in a period
+- Ensure the response is complete and not cut off mid-sentence
 
-Provide a thorough answer using the research data provided.`,
+Provide a thorough answer using the research data provided. Make sure to complete your full thought and end properly.`,
     config: {
-      maxOutputTokens: 1500,
+      maxOutputTokens: 3000,
     },
   });
   return response.text || "No response generated.";
