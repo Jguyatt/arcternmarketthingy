@@ -8,11 +8,27 @@ const getApiKey = (): string => {
   // #region agent log
   const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
   const apiKeyStr = typeof apiKey === 'string' ? apiKey : String(apiKey || '');
+  
+  // Log to console for debugging (will show in browser console)
+  console.log('[GEMINI API] Checking API key...', {
+    hasAPI_KEY: typeof process.env.API_KEY !== 'undefined',
+    hasGEMINI_API_KEY: typeof process.env.GEMINI_API_KEY !== 'undefined',
+    apiKeyType: typeof apiKey,
+    apiKeyLength: apiKeyStr.length,
+    apiKeyValue: apiKeyStr === '' ? 'EMPTY_STRING' : apiKeyStr.substring(0, 5) + '...',
+    processEnvKeys: Object.keys(process.env || {}).filter(k => k.includes('API') || k.includes('GEMINI'))
+  });
+  
   fetch('http://127.0.0.1:7244/ingest/cd052ad8-ca90-4ebc-8d20-38acbade9910',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'services/gemini.ts:getApiKey',message:'Getting API key',data:{apiKeyExists:!!apiKey,apiKeyType:typeof apiKey,apiKeyLength:apiKeyStr.length,apiKeyFirstChars:apiKeyStr.substring(0,5),hasAPI_KEY:typeof process.env.API_KEY!=='undefined',hasGEMINI_API_KEY:typeof process.env.GEMINI_API_KEY!=='undefined',apiKeyValue:apiKeyStr===''?'EMPTY_STRING':apiKeyStr.substring(0,10)+'...'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
   // #endregion
   
   // Check for empty string or undefined
   if (!apiKey || (typeof apiKey === 'string' && apiKey.trim() === '')) {
+    console.error('[GEMINI API] ERROR: API key is missing or empty!', {
+      apiKey,
+      apiKeyStr,
+      processEnv: process.env
+    });
     throw new Error("An API Key must be set. Please set GEMINI_API_KEY environment variable.");
   }
   return typeof apiKey === 'string' ? apiKey : String(apiKey);
