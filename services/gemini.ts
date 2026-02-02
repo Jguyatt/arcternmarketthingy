@@ -101,28 +101,29 @@ export async function queryWebIntelligence(segment: string, query: string) {
 
 Question: ${query}
 
+CRITICAL: Your response must be complete and end with a period. Do not cut off mid-sentence.
+
 Formatting requirements:
-- Keep response between 250-350 words total
+- Keep response between 200-300 words total (be strict about this limit)
 - Start with 2-3 sentence overview paragraph
 - Use bullet points for key characteristics, advantages, and important facts
 - Include 2-3 short paragraphs (2-3 sentences each) covering different aspects
-- End with a brief conclusion sentence
+- End with a brief conclusion sentence that ends with a period
 - No markdown headers (no #, ##, ###, etc.)
 - No em dashes or special formatting characters
 - Write in clear, professional language
 - Make it scannable and easy to read
-- Always end with a complete sentence that ends in a period
 
 Structure your answer like this:
 1. Brief overview paragraph (2-3 sentences)
 2. Key characteristics as bullet points
 3. Short paragraph on advantages/importance
 4. Short paragraph on market context or applications
-5. Brief conclusion sentence
+5. Brief conclusion sentence ending with a period
 
-Be concise but informative. Focus on the most important points.`,
+Be concise but informative. Focus on the most important points. Ensure your response is complete and ends properly.`,
     config: {
-      maxOutputTokens: 800,
+      maxOutputTokens: 2000,
     },
   });
 
