@@ -7,13 +7,15 @@ import { SegmentAnalysis, SavedResearch } from "../types";
 const getApiKey = (): string => {
   // #region agent log
   const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
-  fetch('http://127.0.0.1:7244/ingest/cd052ad8-ca90-4ebc-8d20-38acbade9910',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'services/gemini.ts:getApiKey',message:'Getting API key',data:{apiKeyExists:!!apiKey,apiKeyLength:apiKey?.length||0,hasAPI_KEY:!!process.env.API_KEY,hasGEMINI_API_KEY:!!process.env.GEMINI_API_KEY},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  const apiKeyStr = typeof apiKey === 'string' ? apiKey : String(apiKey || '');
+  fetch('http://127.0.0.1:7244/ingest/cd052ad8-ca90-4ebc-8d20-38acbade9910',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'services/gemini.ts:getApiKey',message:'Getting API key',data:{apiKeyExists:!!apiKey,apiKeyType:typeof apiKey,apiKeyLength:apiKeyStr.length,apiKeyFirstChars:apiKeyStr.substring(0,5),hasAPI_KEY:typeof process.env.API_KEY!=='undefined',hasGEMINI_API_KEY:typeof process.env.GEMINI_API_KEY!=='undefined',apiKeyValue:apiKeyStr===''?'EMPTY_STRING':apiKeyStr.substring(0,10)+'...'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
   // #endregion
   
-  if (!apiKey) {
+  // Check for empty string or undefined
+  if (!apiKey || (typeof apiKey === 'string' && apiKey.trim() === '')) {
     throw new Error("An API Key must be set. Please set GEMINI_API_KEY environment variable.");
   }
-  return apiKey;
+  return typeof apiKey === 'string' ? apiKey : String(apiKey);
 };
 
 // Lazy initialization to avoid errors at module load time
