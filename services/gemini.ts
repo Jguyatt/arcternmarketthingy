@@ -97,14 +97,17 @@ export async function queryWebIntelligence(segment: string, query: string) {
   const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `You are a semiconductor industry expert. Provide a clear, well-structured answer about '${segment}' that addresses the question.
+    contents: `You are a semiconductor industry expert. Provide a clear, concise answer about '${segment}' that addresses the question.
 
 Question: ${query}
 
-CRITICAL: Your response must be complete and end with a period. Do not cut off mid-sentence.
+CRITICAL REQUIREMENTS:
+- Your response MUST be exactly 200-300 words (count carefully)
+- Your response MUST be complete and end with a period
+- Do NOT cut off mid-sentence
+- Do NOT exceed 300 words
 
 Formatting requirements:
-- Keep response between 200-300 words total (be strict about this limit)
 - Start with 2-3 sentence overview paragraph
 - Use bullet points for key characteristics, advantages, and important facts
 - Include 2-3 short paragraphs (2-3 sentences each) covering different aspects
@@ -115,15 +118,15 @@ Formatting requirements:
 - Make it scannable and easy to read
 
 Structure your answer like this:
-1. Brief overview paragraph (2-3 sentences)
-2. Key characteristics as bullet points
-3. Short paragraph on advantages/importance
-4. Short paragraph on market context or applications
-5. Brief conclusion sentence ending with a period
+1. Brief overview paragraph (2-3 sentences, ~50 words)
+2. Key characteristics as bullet points (~80 words)
+3. Short paragraph on advantages/importance (2-3 sentences, ~60 words)
+4. Short paragraph on market context or applications (2-3 sentences, ~60 words)
+5. Brief conclusion sentence ending with a period (~20 words)
 
-Be concise but informative. Focus on the most important points. Ensure your response is complete and ends properly.`,
+Total: approximately 270 words. Be concise, informative, and ensure your response is complete.`,
     config: {
-      maxOutputTokens: 2000,
+      maxOutputTokens: 1500,
     },
   });
 
