@@ -2,10 +2,35 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { SegmentAnalysis, SavedResearch } from "../types";
 
-// Always use the process.env.API_KEY directly as per guidelines.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Get API key from Vite-defined environment variable
+// @ts-ignore - process.env is defined by Vite's define config
+const getApiKey = (): string => {
+  // #region agent log
+  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+  fetch('http://127.0.0.1:7244/ingest/cd052ad8-ca90-4ebc-8d20-38acbade9910',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'services/gemini.ts:getApiKey',message:'Getting API key',data:{apiKeyExists:!!apiKey,apiKeyLength:apiKey?.length||0,hasAPI_KEY:!!process.env.API_KEY,hasGEMINI_API_KEY:!!process.env.GEMINI_API_KEY},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+  // #endregion
+  
+  if (!apiKey) {
+    throw new Error("An API Key must be set. Please set GEMINI_API_KEY environment variable.");
+  }
+  return apiKey;
+};
+
+// Lazy initialization to avoid errors at module load time
+let aiInstance: GoogleGenAI | null = null;
+
+const getAI = (): GoogleGenAI => {
+  if (!aiInstance) {
+    // #region agent log
+    fetch('http://127.0.0.1:7244/ingest/cd052ad8-ca90-4ebc-8d20-38acbade9910',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'services/gemini.ts:getAI',message:'Initializing GoogleGenAI',data:{isFirstInit:!aiInstance},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
+    aiInstance = new GoogleGenAI({ apiKey: getApiKey() });
+  }
+  return aiInstance;
+};
 
 export async function analyzeResearch(segmentTitle: string, researchText: string): Promise<SegmentAnalysis> {
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `You are a world-class semiconductor market analyst for ArcTern Ventures. 
@@ -51,6 +76,7 @@ export async function analyzeResearch(segmentTitle: string, researchText: string
 }
 
 export async function queryWebIntelligence(segment: string, query: string) {
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `You are a semiconductor industry expert helping someone understand the '${segment}' market segment. Answer their question in clear, plain English. Be detailed and thorough. Explain technical concepts in simple terms. Use real-time data where available.
@@ -70,6 +96,7 @@ export async function queryWebIntelligence(segment: string, query: string) {
 }
 
 export async function bulkAnalyze(researchNarrative: string, segmentIds: string[]): Promise<SavedResearch> {
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-pro-preview",
     contents: `You are a VC analyst conducting a broad market scan. 
@@ -134,6 +161,7 @@ export async function bulkAnalyze(researchNarrative: string, segmentIds: string[
 }
 
 export async function queryAssistant(segment: string, context: string, query: string): Promise<string> {
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: `You are a semiconductor industry expert helping someone understand the '${segment}' market segment. Answer their question in clear, plain English. Be detailed and thorough. Explain technical concepts in simple terms.
