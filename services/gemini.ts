@@ -97,13 +97,23 @@ export async function queryWebIntelligence(segment: string, query: string) {
   const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `You are a semiconductor industry expert helping someone understand the '${segment}' market segment. Answer their question in clear, plain English. Be detailed and thorough. Explain technical concepts in simple terms. Use real-time data where available.
-    
-    Question: ${query}
-    
-    Provide a comprehensive answer that directly addresses the question. Use clear language and avoid jargon unless necessary, and if you use technical terms, explain them.`,
+    contents: `You are a semiconductor industry expert. Answer this question about '${segment}' concisely and clearly.
+
+Question: ${query}
+
+Formatting requirements:
+- Use short paragraphs (2-3 sentences max)
+- Use bullet points for lists
+- Use clear section headings
+- Keep total response under 300 words
+- No em dashes, no special formatting characters
+- Write in plain, direct language
+- Be concise and scannable
+
+Answer the question directly and focus on the most important points.`,
     config: {
       tools: [{ googleSearch: {} }],
+      maxOutputTokens: 500,
     },
   });
 
@@ -182,14 +192,26 @@ export async function queryAssistant(segment: string, context: string, query: st
   const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `You are a semiconductor industry expert helping someone understand the '${segment}' market segment. Answer their question in clear, plain English. Be detailed and thorough. Explain technical concepts in simple terms.
-    
-    Use the following research data to inform your answer:
-    ${context}
-    
-    Question: ${query}
-    
-    Provide a comprehensive answer that directly addresses the question. Use clear language and avoid jargon unless necessary, and if you use technical terms, explain them. Structure your answer logically and include relevant details from the research data.`,
+    contents: `You are a semiconductor industry expert. Answer this question about '${segment}' using the provided research data.
+
+Research context:
+${context}
+
+Question: ${query}
+
+Formatting requirements:
+- Use short paragraphs (2-3 sentences max)
+- Use bullet points for lists
+- Use clear section headings
+- Keep total response under 300 words
+- No em dashes, no special formatting characters
+- Write in plain, direct language
+- Be concise and scannable
+
+Answer directly using the research data provided.`,
+    config: {
+      maxOutputTokens: 500,
+    },
   });
   return response.text || "No response generated.";
 }
