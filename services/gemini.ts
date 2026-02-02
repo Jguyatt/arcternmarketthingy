@@ -97,27 +97,32 @@ export async function queryWebIntelligence(segment: string, query: string) {
   const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `You are a semiconductor industry expert. Provide a comprehensive, detailed answer about '${segment}' that thoroughly addresses the question.
+    contents: `You are a semiconductor industry expert. Provide a clear, well-structured answer about '${segment}' that addresses the question.
 
 Question: ${query}
 
 Formatting requirements:
-- Use a mix of short paragraphs (3-4 sentences) and bullet points
-- Start with a brief overview paragraph
-- Use bullet points for lists, comparisons, and key facts
-- Include multiple paragraphs for different aspects of the topic
+- Keep response between 250-350 words total
+- Start with 2-3 sentence overview paragraph
+- Use bullet points for key characteristics, advantages, and important facts
+- Include 2-3 short paragraphs (2-3 sentences each) covering different aspects
+- End with a brief conclusion sentence
 - No markdown headers (no #, ##, ###, etc.)
 - No em dashes or special formatting characters
 - Write in clear, professional language
-- Provide substantial detail (aim for 500-800 words)
-- Structure: overview paragraph, then detailed points, then conclusion paragraph
-- Always end your response with a complete sentence that ends in a period
-- Ensure the response is complete and not cut off mid-sentence
+- Make it scannable and easy to read
+- Always end with a complete sentence that ends in a period
 
-Provide a thorough, informative answer that gives real value and insight. Make sure to complete your full thought and end properly.`,
+Structure your answer like this:
+1. Brief overview paragraph (2-3 sentences)
+2. Key characteristics as bullet points
+3. Short paragraph on advantages/importance
+4. Short paragraph on market context or applications
+5. Brief conclusion sentence
+
+Be concise but informative. Focus on the most important points.`,
     config: {
-      tools: [{ googleSearch: {} }],
-      maxOutputTokens: 3000,
+      maxOutputTokens: 800,
     },
   });
 
