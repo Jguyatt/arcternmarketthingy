@@ -6,11 +6,14 @@ export default defineConfig(({ mode }) => {
     // Load env vars from .env files
     const env = loadEnv(mode, process.cwd(), '');
     // Vercel exposes env vars as process.env during build - check there first
-    // Also check all possible variations
+    // Also check all possible variations including common typos
     const geminiApiKey = 
       process.env.GEMINI_API_KEY || 
+      process.env.gemeni_api_key ||  // Handle typo version
+      process.env.GEMENI_API_KEY ||
       process.env.VITE_GEMINI_API_KEY ||
       env.GEMINI_API_KEY || 
+      env.gemeni_api_key ||
       env.VITE_GEMINI_API_KEY ||
       '';
     
