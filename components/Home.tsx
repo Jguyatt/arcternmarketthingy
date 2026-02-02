@@ -601,7 +601,7 @@ export const Home: React.FC<HomeProps> = ({ onEnter }) => {
         </div>
       </section>
 
-      {/* Navigation Guide Section */}
+      {/* RCVC Methodology Section */}
       <section 
         ref={(el) => { sectionRefs.current[2] = el; }}
         className="relative pt-32 pb-40 md:pt-40 md:pb-56 bg-zinc-950 border-y border-zinc-800 overflow-hidden"
@@ -632,40 +632,26 @@ export const Home: React.FC<HomeProps> = ({ onEnter }) => {
             </div>
           </div>
           
-          <div className="flex flex-col items-center text-center mb-24 md:mb-32 scroll-section scroll-fade-up" style={{ transitionDelay: '0.1s' }}>
+          <div className="flex flex-col items-center text-center mb-16 md:mb-20 scroll-section scroll-fade-up" style={{ transitionDelay: '0.1s' }}>
             <div className="max-w-3xl">
-              <span className="font-mono text-xs uppercase tracking-[0.5em] text-zinc-400 font-semibold mb-6 block">Intelligence Protocol</span>
-              <h3 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-[-0.02em] leading-[1.1] text-white">
-                Two Ways to <span className="font-normal text-[#D1623C]">Explore</span>
+              <span className="font-mono text-xs uppercase tracking-[0.5em] text-zinc-400 font-semibold mb-6 block">RCVC</span>
+              <h3 className="text-4xl md:text-5xl lg:text-6xl font-light tracking-[-0.02em] leading-[1.1] text-white mb-8">
+                About This <span className="font-normal text-[#D1623C]">Platform</span>
               </h3>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 max-w-5xl mx-auto">
-            <div 
-              className="group space-y-6 p-10 md:p-12 border border-zinc-800 bg-zinc-900/50 hover:border-[#D1623C]/40 transition-all duration-700 hover:bg-zinc-900 scroll-section scroll-scale relative overflow-hidden"
-              style={{ transitionDelay: '0.2s' }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#D1623C]/0 via-[#D1623C]/0 to-[#D1623C]/0 group-hover:from-[#D1623C]/10 group-hover:via-[#D1623C]/0 group-hover:to-[#D1623C]/0 transition-all duration-700"></div>
-              <div className="relative z-10">
-                <span className="text-5xl md:text-6xl font-extralight text-zinc-800 group-hover:text-[#D1623C]/30 transition-colors duration-500 block leading-none mb-2">01</span>
-                <h4 className="text-xl md:text-2xl font-normal tracking-[-0.01em] text-white group-hover:text-[#D1623C] transition-colors duration-300 mb-4">All Segments</h4>
-                <p className="text-base text-zinc-300 leading-[1.7] font-light group-hover:text-zinc-200 transition-colors duration-300">
-                  View 13 compute segments organized by category. Each segment shows companies, technologies, and market status.
+          <div className="max-w-4xl mx-auto scroll-section scroll-fade-up" style={{ transitionDelay: '0.2s' }}>
+            <div className="relative p-10 md:p-12 border border-zinc-800 bg-zinc-900/50 hover:border-[#D1623C]/40 transition-all duration-700">
+              <div className="relative z-10 space-y-6">
+                <p className="text-lg md:text-xl text-zinc-200 leading-[1.8] font-light">
+                  Rotman Commerce Venture Capital is <span className="text-[#D1623C]">delighted to present</span> this comprehensive semiconductor market intelligence platform to ArcTern Ventures. Built by our team of student analysts, this interactive explorer represents months of research into the evolving compute architecture landscape.
                 </p>
-              </div>
-            </div>
-
-            <div 
-              className="group space-y-6 p-10 md:p-12 border border-zinc-800 bg-zinc-900/50 hover:border-[#D1623C]/40 transition-all duration-700 hover:bg-zinc-900 scroll-section scroll-scale relative overflow-hidden"
-              style={{ transitionDelay: '0.3s' }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-[#D1623C]/0 via-[#D1623C]/0 to-[#D1623C]/0 group-hover:from-[#D1623C]/10 group-hover:via-[#D1623C]/0 group-hover:to-[#D1623C]/0 transition-all duration-700"></div>
-              <div className="relative z-10">
-                <span className="text-5xl md:text-6xl font-extralight text-zinc-800 group-hover:text-[#D1623C]/30 transition-colors duration-500 block leading-none mb-2">02</span>
-                <h4 className="text-xl md:text-2xl font-normal tracking-[-0.01em] text-white group-hover:text-[#D1623C] transition-colors duration-300 mb-4">Market Overview</h4>
-                <p className="text-base text-zinc-300 leading-[1.7] font-light group-hover:text-zinc-200 transition-colors duration-300">
-                  A summary view of all segments organized by category. Shows which segments are priorities and which companies are active in each area.
+                <p className="text-lg md:text-xl text-zinc-200 leading-[1.8] font-light">
+                  This platform enables you to explore 13 distinct compute segments, understand market dynamics, and identify emerging opportunities across the semiconductor ecosystem. We've synthesized complex technical research into actionable insights that help navigate the competitive landscape.
+                </p>
+                <p className="text-lg md:text-xl text-zinc-200 leading-[1.8] font-light">
+                  Our methodology combines rigorous financial analysis with deep technical research, the same approach we apply to all our investment evaluations. We hope this tool provides valuable intelligence as you navigate the next frontier of compute.
                 </p>
               </div>
             </div>
@@ -754,7 +740,7 @@ export const Home: React.FC<HomeProps> = ({ onEnter }) => {
             <div className="h-12 w-px bg-zinc-700"></div>
             <div className="font-mono text-xs text-zinc-400 uppercase tracking-[0.2em] space-y-1 text-left">
               <p className="text-white font-medium">Rotman Commerce Venture Capital</p>
-              <p className="text-zinc-500">Strategic Intelligence Group</p>
+              <p className="text-zinc-500">Venture Research Group</p>
             </div>
           </div>
           
