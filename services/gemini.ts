@@ -97,23 +97,25 @@ export async function queryWebIntelligence(segment: string, query: string) {
   const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `You are a semiconductor industry expert. Answer this question about '${segment}' concisely and clearly.
+    contents: `You are a semiconductor industry expert. Provide a comprehensive, detailed answer about '${segment}' that thoroughly addresses the question.
 
 Question: ${query}
 
 Formatting requirements:
-- Use short paragraphs (2-3 sentences max)
-- Use bullet points for lists
-- Use clear section headings
-- Keep total response under 300 words
-- No em dashes, no special formatting characters
-- Write in plain, direct language
-- Be concise and scannable
+- Use a mix of short paragraphs (3-4 sentences) and bullet points
+- Start with a brief overview paragraph
+- Use bullet points for lists, comparisons, and key facts
+- Include multiple paragraphs for different aspects of the topic
+- No markdown headers (no #, ##, ###, etc.)
+- No em dashes or special formatting characters
+- Write in clear, professional language
+- Provide substantial detail (aim for 400-600 words)
+- Structure: overview paragraph, then detailed points, then conclusion if needed
 
-Answer the question directly and focus on the most important points.`,
+Provide a thorough, informative answer that gives real value and insight.`,
     config: {
       tools: [{ googleSearch: {} }],
-      maxOutputTokens: 500,
+      maxOutputTokens: 1500,
     },
   });
 
@@ -192,7 +194,7 @@ export async function queryAssistant(segment: string, context: string, query: st
   const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `You are a semiconductor industry expert. Answer this question about '${segment}' using the provided research data.
+    contents: `You are a semiconductor industry expert. Provide a comprehensive, detailed answer about '${segment}' using the provided research data.
 
 Research context:
 ${context}
@@ -200,17 +202,19 @@ ${context}
 Question: ${query}
 
 Formatting requirements:
-- Use short paragraphs (2-3 sentences max)
-- Use bullet points for lists
-- Use clear section headings
-- Keep total response under 300 words
-- No em dashes, no special formatting characters
-- Write in plain, direct language
-- Be concise and scannable
+- Use a mix of short paragraphs (3-4 sentences) and bullet points
+- Start with a brief overview paragraph
+- Use bullet points for lists, comparisons, and key facts
+- Include multiple paragraphs for different aspects of the topic
+- No markdown headers (no #, ##, ###, etc.)
+- No em dashes or special formatting characters
+- Write in clear, professional language
+- Provide substantial detail (aim for 400-600 words)
+- Structure: overview paragraph, then detailed points, then conclusion if needed
 
-Answer directly using the research data provided.`,
+Provide a thorough answer using the research data provided.`,
     config: {
-      maxOutputTokens: 500,
+      maxOutputTokens: 1500,
     },
   });
   return response.text || "No response generated.";
