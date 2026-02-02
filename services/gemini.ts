@@ -97,18 +97,20 @@ export async function queryWebIntelligence(segment: string, query: string) {
   const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
-    contents: `You are a semiconductor industry expert. Provide a clear, concise answer about '${segment}' that addresses the question.
+    contents: `You are a semiconductor industry expert. Provide a clear, concise answer about '${segment}' that fully addresses the question.
 
 Question: ${query}
 
 CRITICAL REQUIREMENTS:
+- Your response MUST fully answer the question asked
 - Your response MUST be exactly 200-300 words (count carefully)
 - Your response MUST be complete and end with a period
 - Do NOT cut off mid-sentence
 - Do NOT exceed 300 words
+- Ensure you directly address what was asked in the question
 
 Formatting requirements:
-- Start with 2-3 sentence overview paragraph
+- Start with 2-3 sentence overview paragraph that directly answers the question
 - Use bullet points for key characteristics, advantages, and important facts
 - Include 2-3 short paragraphs (2-3 sentences each) covering different aspects
 - End with a brief conclusion sentence that ends with a period
@@ -118,19 +120,34 @@ Formatting requirements:
 - Make it scannable and easy to read
 
 Structure your answer like this:
-1. Brief overview paragraph (2-3 sentences, ~50 words)
+1. Brief overview paragraph (2-3 sentences, ~50 words) - directly answer the question
 2. Key characteristics as bullet points (~80 words)
 3. Short paragraph on advantages/importance (2-3 sentences, ~60 words)
 4. Short paragraph on market context or applications (2-3 sentences, ~60 words)
 5. Brief conclusion sentence ending with a period (~20 words)
 
-Total: approximately 270 words. Be concise, informative, and ensure your response is complete.`,
+Total: approximately 270 words. Be concise, informative, ensure your response fully answers the question, and is complete.`,
     config: {
-      maxOutputTokens: 1500,
+      maxOutputTokens: 2000,
     },
   });
 
-  const text = response.text || "No intelligence found for this query.";
+  let text = response.text || "No intelligence found for this query.";
+  
+  // Ensure response ends properly - if it's cut off, try to clean it up
+  if (text && !text.trim().endsWith('.') && !text.trim().endsWith('!') && !text.trim().endsWith('?')) {
+    // If it ends mid-sentence, try to find the last complete sentence
+    const lastPeriod = text.lastIndexOf('.');
+    const lastExclamation = text.lastIndexOf('!');
+    const lastQuestion = text.lastIndexOf('?');
+    const lastComplete = Math.max(lastPeriod, lastExclamation, lastQuestion);
+    
+    if (lastComplete > text.length * 0.8) {
+      // If we found a complete sentence in the last 20% of text, use that
+      text = text.substring(0, lastComplete + 1);
+    }
+  }
+  
   const citations = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
   
   return { text, citations };
