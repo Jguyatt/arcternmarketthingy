@@ -2,20 +2,22 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export const Research: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('general-purpose');
+  const [scrollProgress, setScrollProgress] = useState(0);
   const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.2) {
             setActiveSection(entry.target.id);
           }
         });
       },
       {
-        threshold: [0.3, 0.5, 0.7],
-        rootMargin: '-100px 0px -50% 0px',
+        threshold: [0.2, 0.5, 0.8],
+        rootMargin: '-120px 0px -40% 0px',
       }
     );
 
@@ -23,7 +25,20 @@ export const Research: React.FC = () => {
       if (ref) observer.observe(ref);
     });
 
+    const handleScroll = () => {
+      if (!containerRef.current) return;
+      const container = containerRef.current;
+      const scrollTop = window.scrollY;
+      const scrollHeight = container.scrollHeight - window.innerHeight;
+      const progress = Math.min(Math.max(scrollTop / scrollHeight, 0), 1);
+      setScrollProgress(progress);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
     return () => {
+      window.removeEventListener('scroll', handleScroll);
       Object.values(sectionRefs.current).forEach((ref) => {
         if (ref) observer.unobserve(ref);
       });
@@ -49,46 +64,79 @@ export const Research: React.FC = () => {
     { id: 'reconfigurable', label: 'Reconfigurable Hardware' },
   ];
 
+  // Calculate positions for each section
+  const getSectionPosition = (sectionId: string) => {
+    const element = sectionRefs.current[sectionId];
+    if (!element || !containerRef.current) return 0;
+    const containerTop = containerRef.current.getBoundingClientRect().top + window.scrollY;
+    const elementTop = element.getBoundingClientRect().top + window.scrollY;
+    const containerHeight = containerRef.current.scrollHeight;
+    const viewportHeight = window.innerHeight;
+    const scrollableHeight = containerHeight - viewportHeight;
+    
+    return Math.min(Math.max((elementTop - containerTop) / scrollableHeight, 0), 1);
+  };
+
   return (
-    <div className="page-fade-in relative">
-      {/* Sidebar Navigation */}
-      <aside className="fixed left-6 top-1/2 -translate-y-1/2 z-50">
-        <div className="flex flex-col gap-4">
-          {sections.map((section) => (
-            <button
-              key={section.id}
-              onClick={() => scrollToSection(section.id)}
-              className={`group flex items-center gap-3 transition-all ${
-                activeSection === section.id
-                  ? 'text-[#D1623C]'
-                  : 'text-zinc-500 hover:text-zinc-300'
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <div
-                  className={`h-0.5 transition-all ${
-                    activeSection === section.id
-                      ? 'bg-[#D1623C] w-12'
-                      : 'bg-zinc-700 group-hover:bg-zinc-600 w-8'
-                  }`}
-                />
-                <div
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    activeSection === section.id
-                      ? 'bg-[#D1623C] scale-125'
-                      : 'bg-zinc-600 group-hover:bg-zinc-500'
-                  }`}
-                />
-              </div>
-              <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap">
-                {section.label}
-              </span>
-            </button>
-          ))}
+    <div className="page-fade-in relative" ref={containerRef}>
+      {/* Vertical Progress Line */}
+      <aside className="fixed left-8 top-0 bottom-0 z-50 w-px">
+        {/* Background line */}
+        <div className="absolute inset-0 bg-zinc-800/50"></div>
+        
+        {/* Active progress line */}
+        <div 
+          className="absolute top-0 left-0 w-full bg-[#D1623C] transition-all duration-300"
+          style={{
+            height: `${scrollProgress * 100}%`,
+            width: activeSection ? '2px' : '1px',
+          }}
+        ></div>
+
+        {/* Section markers */}
+        <div className="absolute inset-0 flex flex-col justify-between py-20">
+          {sections.map((section, index) => {
+            const position = getSectionPosition(section.id);
+            const isActive = activeSection === section.id;
+            const progressToSection = getSectionPosition(section.id);
+            const isPassed = scrollProgress >= progressToSection;
+            
+            return (
+              <button
+                key={section.id}
+                onClick={() => scrollToSection(section.id)}
+                className="group absolute left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3 transition-all"
+                style={{
+                  top: `${position * 100}%`,
+                }}
+              >
+                <div className="flex items-center gap-2">
+                  <div
+                    className={`transition-all ${
+                      isActive
+                        ? 'bg-[#D1623C] w-3 h-3 scale-125'
+                        : isPassed
+                        ? 'bg-[#D1623C]/50 w-2 h-2'
+                        : 'bg-zinc-600 w-2 h-2 group-hover:bg-zinc-500'
+                    } rounded-full`}
+                  />
+                </div>
+                <span className={`text-xs font-medium uppercase tracking-wider whitespace-nowrap transition-all ${
+                  isActive
+                    ? 'text-[#D1623C] opacity-100'
+                    : isPassed
+                    ? 'text-zinc-400 opacity-70'
+                    : 'text-zinc-600 opacity-0 group-hover:opacity-100'
+                }`}>
+                  {section.label}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </aside>
 
-      <div className="max-w-6xl mx-auto ml-48">
+      <div className="max-w-6xl mx-auto ml-20">
       {/* Header */}
       <div className="mb-12 pb-8 border-b border-zinc-800">
         <div className="flex items-center gap-4 mb-4">
