@@ -354,6 +354,46 @@ export const Research: React.FC = () => {
           </div>
         </section>
       </div>
+
+      {/* Footer */}
+      <footer className="mt-24 pt-16 pb-12 border-t border-zinc-800">
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-10 lg:gap-12">
+          {/* RCVC Logo */}
+          <div className="flex items-center gap-6">
+            <div className="relative">
+              {/* Gradient background behind logo */}
+              <div className="absolute inset-0 -inset-2 rounded-lg bg-gradient-to-br from-zinc-800/80 via-zinc-800/60 to-zinc-900/80 blur-sm"></div>
+              <div className="absolute inset-0 -inset-1 rounded-lg bg-gradient-to-br from-white/5 via-transparent to-transparent"></div>
+              <img 
+                src="/image.png" 
+                alt="RCVC Logo" 
+                className="relative h-12 md:h-16 w-auto opacity-100 hover:opacity-100 transition-opacity"
+              />
+            </div>
+            <div className="h-12 w-px bg-zinc-700"></div>
+            <div className="font-mono text-xs text-zinc-400 uppercase tracking-[0.2em] space-y-1 text-left">
+              <p className="text-white font-medium">Rotman Commerce Venture Capital</p>
+              <p className="text-zinc-500">Venture Research Group</p>
+            </div>
+          </div>
+          
+          {/* Center - For ArcTern Ventures */}
+          <div className="flex flex-col items-center gap-3">
+            <p className="text-sm font-mono text-zinc-400 uppercase tracking-[0.3em] text-center">
+              Prepared for
+            </p>
+            <p className="text-lg font-light text-white tracking-wide">
+              ArcTern Ventures
+            </p>
+          </div>
+
+          {/* Right - Document Info */}
+          <div className="font-mono text-xs text-zinc-500 uppercase tracking-[0.2em] text-center lg:text-right space-y-1">
+            <p>RCVC-2026-ALPHA-INTEL</p>
+            <p className="text-zinc-600">Confidential</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
