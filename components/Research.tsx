@@ -394,7 +394,6 @@ export const Research: React.FC = () => {
           </div>
         </div>
       </footer>
-      </div>
     </div>
   );
 };
