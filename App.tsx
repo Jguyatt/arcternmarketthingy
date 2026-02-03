@@ -5,10 +5,11 @@ import { Card } from './components/Card';
 import { DetailModal } from './components/DetailModal';
 import { LandscapeOverview } from './components/LandscapeOverview';
 import { Home } from './components/Home';
+import { Research } from './components/Research';
 import { INITIAL_RESEARCH } from './initialData';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<'home' | 'grid' | 'landscape'>('home');
+  const [view, setView] = useState<'home' | 'grid' | 'landscape' | 'research'>('home');
   const [selectedSegment, setSelectedSegment] = useState<ComputeSegment | null>(null);
   const [savedResearch, setSavedResearch] = useState<SavedResearch>({});
 
@@ -108,6 +109,12 @@ const App: React.FC = () => {
                   >
                     Market Overview
                   </button>
+                  <button 
+                    onClick={() => setView('research')}
+                    className={`px-6 py-2 rounded-md text-xs font-semibold uppercase tracking-wide transition-all ${view === 'research' ? 'bg-zinc-900 text-white shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}
+                  >
+                    Research
+                  </button>
                 </nav>
             </div>
 
@@ -153,6 +160,12 @@ const App: React.FC = () => {
         {view === 'landscape' && (
           <div className="page-fade-in">
             <LandscapeOverview research={savedResearch} />
+          </div>
+        )}
+
+        {view === 'research' && (
+          <div className="page-fade-in">
+            <Research />
           </div>
         )}
       </main>
