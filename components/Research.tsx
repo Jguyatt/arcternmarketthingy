@@ -1,8 +1,94 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export const Research: React.FC = () => {
+  const [activeSection, setActiveSection] = useState<string>('general-purpose');
+  const sectionRefs = useRef<{ [key: string]: HTMLElement | null }>({});
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio > 0.3) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        threshold: [0.3, 0.5, 0.7],
+        rootMargin: '-100px 0px -50% 0px',
+      }
+    );
+
+    Object.values(sectionRefs.current).forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => {
+      Object.values(sectionRefs.current).forEach((ref) => {
+        if (ref) observer.unobserve(ref);
+      });
+    };
+  }, []);
+
+  const scrollToSection = (sectionId: string) => {
+    const element = sectionRefs.current[sectionId];
+    if (element) {
+      const headerOffset = 100;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
+  };
+
+  const sections = [
+    { id: 'general-purpose', label: 'General-Purpose Accelerators' },
+    { id: 'reconfigurable', label: 'Reconfigurable Hardware' },
+  ];
+
   return (
-    <div className="page-fade-in max-w-6xl mx-auto">
+    <div className="page-fade-in relative">
+      {/* Sidebar Navigation */}
+      <aside className="fixed left-8 top-1/2 -translate-y-1/2 z-30 hidden lg:block">
+        <div className="flex flex-col gap-2">
+          {sections.map((section) => (
+            <button
+              key={section.id}
+              onClick={() => scrollToSection(section.id)}
+              className={`group flex items-center gap-3 transition-all ${
+                activeSection === section.id
+                  ? 'text-[#D1623C]'
+                  : 'text-zinc-500 hover:text-zinc-300'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <div
+                  className={`h-px w-8 transition-all ${
+                    activeSection === section.id
+                      ? 'bg-[#D1623C] w-12'
+                      : 'bg-zinc-700 group-hover:bg-zinc-600'
+                  }`}
+                />
+                <div
+                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                    activeSection === section.id
+                      ? 'bg-[#D1623C] scale-150'
+                      : 'bg-zinc-600 group-hover:bg-zinc-500'
+                  }`}
+                />
+              </div>
+              <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap">
+                {section.label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </aside>
+
+      <div className="max-w-6xl mx-auto lg:ml-32">
       {/* Header */}
       <div className="mb-12 pb-8 border-b border-zinc-800">
         <div className="flex items-center gap-4 mb-4">
@@ -19,7 +105,11 @@ export const Research: React.FC = () => {
       {/* Main Content */}
       <div className="space-y-16">
         {/* General-Purpose Accelerators Section */}
-        <section className="space-y-8">
+        <section 
+          id="general-purpose"
+          ref={(el) => { sectionRefs.current['general-purpose'] = el; }}
+          className="space-y-8"
+        >
           <div className="space-y-4">
             <h2 className="text-3xl font-light text-white tracking-[-0.01em]">
               General-Purpose <span className="text-[#D1623C]">Accelerators</span>
@@ -224,7 +314,11 @@ export const Research: React.FC = () => {
         </section>
 
         {/* Reconfigurable Hardware Section */}
-        <section className="space-y-8 pt-8 border-t border-zinc-800">
+        <section 
+          id="reconfigurable"
+          ref={(el) => { sectionRefs.current['reconfigurable'] = el; }}
+          className="space-y-8 pt-8 border-t border-zinc-800"
+        >
           <div className="space-y-4">
             <h2 className="text-3xl font-light text-white tracking-[-0.01em]">
               Reconfigurable <span className="text-[#D1623C]">Hardware</span>
@@ -394,6 +488,7 @@ export const Research: React.FC = () => {
           </div>
         </div>
       </footer>
+      </div>
     </div>
   );
 };
