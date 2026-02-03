@@ -52,7 +52,7 @@ export const Research: React.FC = () => {
   return (
     <div className="page-fade-in relative">
       {/* Sidebar Navigation */}
-      <aside className="fixed left-4 top-1/2 -translate-y-1/2 z-50 md:block">
+      <aside className="fixed left-6 top-1/2 -translate-y-1/2 z-50">
         <div className="flex flex-col gap-4">
           {sections.map((section) => (
             <button
@@ -80,7 +80,7 @@ export const Research: React.FC = () => {
                   }`}
                 />
               </div>
-              <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap opacity-0 md:opacity-100 transition-opacity">
+              <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap">
                 {section.label}
               </span>
             </button>
@@ -88,7 +88,7 @@ export const Research: React.FC = () => {
         </div>
       </aside>
 
-      <div className="max-w-6xl mx-auto md:ml-40">
+      <div className="max-w-6xl mx-auto ml-48">
       {/* Header */}
       <div className="mb-12 pb-8 border-b border-zinc-800">
         <div className="flex items-center gap-4 mb-4">
