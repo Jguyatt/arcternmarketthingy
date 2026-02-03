@@ -52,8 +52,8 @@ export const Research: React.FC = () => {
   return (
     <div className="page-fade-in relative">
       {/* Sidebar Navigation */}
-      <aside className="fixed left-8 top-1/2 -translate-y-1/2 z-30 hidden lg:block">
-        <div className="flex flex-col gap-2">
+      <aside className="fixed left-4 top-1/2 -translate-y-1/2 z-50 md:block">
+        <div className="flex flex-col gap-4">
           {sections.map((section) => (
             <button
               key={section.id}
@@ -66,21 +66,21 @@ export const Research: React.FC = () => {
             >
               <div className="flex items-center gap-2">
                 <div
-                  className={`h-px w-8 transition-all ${
+                  className={`h-0.5 transition-all ${
                     activeSection === section.id
                       ? 'bg-[#D1623C] w-12'
-                      : 'bg-zinc-700 group-hover:bg-zinc-600'
+                      : 'bg-zinc-700 group-hover:bg-zinc-600 w-8'
                   }`}
                 />
                 <div
-                  className={`w-1.5 h-1.5 rounded-full transition-all ${
+                  className={`w-2 h-2 rounded-full transition-all ${
                     activeSection === section.id
-                      ? 'bg-[#D1623C] scale-150'
+                      ? 'bg-[#D1623C] scale-125'
                       : 'bg-zinc-600 group-hover:bg-zinc-500'
                   }`}
                 />
               </div>
-              <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap">
+              <span className="text-xs font-medium uppercase tracking-wider whitespace-nowrap opacity-0 md:opacity-100 transition-opacity">
                 {section.label}
               </span>
             </button>
@@ -88,7 +88,7 @@ export const Research: React.FC = () => {
         </div>
       </aside>
 
-      <div className="max-w-6xl mx-auto lg:ml-32">
+      <div className="max-w-6xl mx-auto md:ml-40">
       {/* Header */}
       <div className="mb-12 pb-8 border-b border-zinc-800">
         <div className="flex items-center gap-4 mb-4">
