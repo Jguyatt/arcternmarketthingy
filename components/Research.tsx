@@ -72,34 +72,34 @@ export const Research: React.FC = () => {
     const elementTop = element.getBoundingClientRect().top + window.scrollY;
     const containerHeight = containerRef.current.scrollHeight;
     const viewportHeight = window.innerHeight;
-    const scrollableHeight = containerHeight - viewportHeight;
+    const scrollableHeight = Math.max(containerHeight - viewportHeight, 1);
     
-    return Math.min(Math.max((elementTop - containerTop) / scrollableHeight, 0), 1);
+    return Math.min(Math.max((elementTop - containerTop - 200) / scrollableHeight, 0), 1);
   };
 
   return (
     <div className="page-fade-in relative" ref={containerRef}>
       {/* Vertical Progress Line */}
-      <aside className="fixed left-8 top-0 bottom-0 z-50 w-px">
-        {/* Background line */}
-        <div className="absolute inset-0 bg-zinc-800/50"></div>
-        
-        {/* Active progress line */}
-        <div 
-          className="absolute top-0 left-0 w-full bg-[#D1623C] transition-all duration-300"
-          style={{
-            height: `${scrollProgress * 100}%`,
-            width: activeSection ? '2px' : '1px',
-          }}
-        ></div>
+      <aside className="fixed left-8 top-0 bottom-0 z-50 flex items-center">
+        <div className="relative h-full w-1">
+          {/* Background line */}
+          <div className="absolute inset-0 bg-zinc-800/30"></div>
+          
+          {/* Active progress line - fills from top */}
+          <div 
+            className="absolute top-0 left-0 bg-[#D1623C] transition-all duration-200 ease-out"
+            style={{
+              height: `${scrollProgress * 100}%`,
+              width: activeSection ? '3px' : '1px',
+            }}
+          ></div>
 
-        {/* Section markers */}
-        <div className="absolute inset-0 flex flex-col justify-between py-20">
-          {sections.map((section, index) => {
+          {/* Section markers */}
+          {sections.map((section) => {
             const position = getSectionPosition(section.id);
             const isActive = activeSection === section.id;
             const progressToSection = getSectionPosition(section.id);
-            const isPassed = scrollProgress >= progressToSection;
+            const isPassed = scrollProgress >= progressToSection - 0.05;
             
             return (
               <button
@@ -107,25 +107,23 @@ export const Research: React.FC = () => {
                 onClick={() => scrollToSection(section.id)}
                 className="group absolute left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3 transition-all"
                 style={{
-                  top: `${position * 100}%`,
+                  top: `${Math.max(0, Math.min(1, position)) * 100}%`,
                 }}
               >
-                <div className="flex items-center gap-2">
-                  <div
-                    className={`transition-all ${
-                      isActive
-                        ? 'bg-[#D1623C] w-3 h-3 scale-125'
-                        : isPassed
-                        ? 'bg-[#D1623C]/50 w-2 h-2'
-                        : 'bg-zinc-600 w-2 h-2 group-hover:bg-zinc-500'
-                    } rounded-full`}
-                  />
-                </div>
-                <span className={`text-xs font-medium uppercase tracking-wider whitespace-nowrap transition-all ${
+                <div
+                  className={`transition-all rounded-full ${
+                    isActive
+                      ? 'bg-[#D1623C] w-4 h-4 scale-125 shadow-lg shadow-[#D1623C]/50'
+                      : isPassed
+                      ? 'bg-[#D1623C]/60 w-3 h-3'
+                      : 'bg-zinc-600 w-2 h-2 group-hover:bg-zinc-500 group-hover:w-3 group-hover:h-3'
+                  }`}
+                />
+                <span className={`text-xs font-medium uppercase tracking-wider whitespace-nowrap transition-all ml-2 ${
                   isActive
                     ? 'text-[#D1623C] opacity-100'
                     : isPassed
-                    ? 'text-zinc-400 opacity-70'
+                    ? 'text-zinc-400 opacity-60'
                     : 'text-zinc-600 opacity-0 group-hover:opacity-100'
                 }`}>
                   {section.label}
@@ -136,7 +134,7 @@ export const Research: React.FC = () => {
         </div>
       </aside>
 
-      <div className="max-w-6xl mx-auto ml-20">
+      <div className="max-w-6xl mx-auto ml-24">
       {/* Header */}
       <div className="mb-12 pb-8 border-b border-zinc-800">
         <div className="flex items-center gap-4 mb-4">
