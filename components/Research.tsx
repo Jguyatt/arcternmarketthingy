@@ -64,77 +64,78 @@ export const Research: React.FC = () => {
     { id: 'reconfigurable', label: 'Reconfigurable Hardware' },
   ];
 
-  // Calculate positions for each section
-  const getSectionPosition = (sectionId: string) => {
-    const element = sectionRefs.current[sectionId];
-    if (!element || !containerRef.current) return 0;
-    const containerTop = containerRef.current.getBoundingClientRect().top + window.scrollY;
-    const elementTop = element.getBoundingClientRect().top + window.scrollY;
-    const containerHeight = containerRef.current.scrollHeight;
-    const viewportHeight = window.innerHeight;
-    const scrollableHeight = Math.max(containerHeight - viewportHeight, 1);
-    
-    return Math.min(Math.max((elementTop - containerTop - 200) / scrollableHeight, 0), 1);
-  };
-
   return (
     <div className="page-fade-in relative" ref={containerRef}>
-      {/* Vertical Progress Line */}
-      <aside className="fixed left-8 top-0 bottom-0 z-50 flex items-center">
-        <div className="relative h-full w-1">
-          {/* Background line */}
-          <div className="absolute inset-0 bg-zinc-800/30"></div>
-          
-          {/* Active progress line - fills from top */}
-          <div 
-            className="absolute top-0 left-0 bg-[#D1623C] transition-all duration-200 ease-out"
-            style={{
-              height: `${scrollProgress * 100}%`,
-              width: activeSection ? '3px' : '1px',
-            }}
-          ></div>
-
-          {/* Section markers */}
-          {sections.map((section) => {
-            const position = getSectionPosition(section.id);
-            const isActive = activeSection === section.id;
-            const progressToSection = getSectionPosition(section.id);
-            const isPassed = scrollProgress >= progressToSection - 0.05;
+      {/* Vertical Progress Line with Sidebar */}
+      <aside className="fixed left-8 top-1/2 -translate-y-1/2 z-50">
+        <div className="flex items-center gap-4">
+          {/* Progress Line */}
+          <div className="relative w-1 h-[400px] flex flex-col items-center">
+            {/* Background line */}
+            <div className="absolute inset-0 bg-zinc-800/30"></div>
             
-            return (
-              <button
-                key={section.id}
-                onClick={() => scrollToSection(section.id)}
-                className="group absolute left-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-3 transition-all"
-                style={{
-                  top: `${Math.max(0, Math.min(1, position)) * 100}%`,
-                }}
-              >
+            {/* Active progress line - fills from top */}
+            <div 
+              className="absolute top-0 left-0 bg-[#D1623C] transition-all duration-200 ease-out"
+              style={{
+                height: `${scrollProgress * 100}%`,
+                width: '2px',
+              }}
+            ></div>
+
+            {/* Section markers positioned along the line */}
+            {sections.map((section, index) => {
+              const position = (index + 0.5) / sections.length; // Evenly spaced
+              const isActive = activeSection === section.id;
+              
+              return (
                 <div
-                  className={`transition-all rounded-full ${
+                  key={section.id}
+                  className="absolute left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-2"
+                  style={{
+                    top: `${position * 100}%`,
+                  }}
+                >
+                  <div
+                    className={`transition-all rounded-full ${
+                      isActive
+                        ? 'bg-[#D1623C] w-4 h-4 scale-150 shadow-lg shadow-[#D1623C]/50'
+                        : 'bg-zinc-600 w-2 h-2'
+                    }`}
+                  />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Section Labels - Always Visible */}
+          <div className="flex flex-col gap-8">
+            {sections.map((section) => {
+              const isActive = activeSection === section.id;
+              
+              return (
+                <button
+                  key={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  className={`text-left transition-all ${
                     isActive
-                      ? 'bg-[#D1623C] w-4 h-4 scale-125 shadow-lg shadow-[#D1623C]/50'
-                      : isPassed
-                      ? 'bg-[#D1623C]/60 w-3 h-3'
-                      : 'bg-zinc-600 w-2 h-2 group-hover:bg-zinc-500 group-hover:w-3 group-hover:h-3'
+                      ? 'text-[#D1623C] scale-110'
+                      : 'text-zinc-500 hover:text-zinc-300'
                   }`}
-                />
-                <span className={`text-xs font-medium uppercase tracking-wider whitespace-nowrap transition-all ml-2 ${
-                  isActive
-                    ? 'text-[#D1623C] opacity-100'
-                    : isPassed
-                    ? 'text-zinc-400 opacity-60'
-                    : 'text-zinc-600 opacity-0 group-hover:opacity-100'
-                }`}>
-                  {section.label}
-                </span>
-              </button>
-            );
-          })}
+                >
+                  <span className={`text-xs font-medium uppercase tracking-wider whitespace-nowrap transition-all ${
+                    isActive ? 'font-semibold' : ''
+                  }`}>
+                    {section.label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </aside>
 
-      <div className="max-w-6xl mx-auto ml-24">
+      <div className="max-w-6xl mx-auto ml-64">
       {/* Header */}
       <div className="mb-12 pb-8 border-b border-zinc-800">
         <div className="flex items-center gap-4 mb-4">
