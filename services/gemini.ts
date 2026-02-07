@@ -5,31 +5,34 @@ import { SegmentAnalysis, SavedResearch } from "../types";
 // Get API key from Vite-defined environment variable
 // @ts-ignore - process.env is defined by Vite's define config
 const getApiKey = (): string => {
-  // #region agent log
-  const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+  // Check multiple possible environment variable names (including common typos)
+  const apiKey = process.env.GEMINI_API_KEY || 
+                 process.env.GEMENI_API_KEY || 
+                 process.env.gemeni_api_key ||
+                 process.env.API_KEY || 
+                 process.env.VITE_GEMINI_API_KEY;
   const apiKeyStr = typeof apiKey === 'string' ? apiKey : String(apiKey || '');
   
   // Log to console for debugging (will show in browser console)
   console.log('[GEMINI API] Checking API key...', {
-    hasAPI_KEY: typeof process.env.API_KEY !== 'undefined',
     hasGEMINI_API_KEY: typeof process.env.GEMINI_API_KEY !== 'undefined',
+    hasGEMENI_API_KEY: typeof process.env.GEMENI_API_KEY !== 'undefined',
+    hasAPI_KEY: typeof process.env.API_KEY !== 'undefined',
     apiKeyType: typeof apiKey,
     apiKeyLength: apiKeyStr.length,
     apiKeyValue: apiKeyStr === '' ? 'EMPTY_STRING' : apiKeyStr.substring(0, 5) + '...',
-    processEnvKeys: Object.keys(process.env || {}).filter(k => k.includes('API') || k.includes('GEMINI'))
+    processEnvKeys: Object.keys(process.env || {}).filter(k => k.includes('API') || k.includes('GEMINI') || k.includes('GEMENI'))
   });
-  
-  fetch('http://127.0.0.1:7244/ingest/cd052ad8-ca90-4ebc-8d20-38acbade9910',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'services/gemini.ts:getApiKey',message:'Getting API key',data:{apiKeyExists:!!apiKey,apiKeyType:typeof apiKey,apiKeyLength:apiKeyStr.length,apiKeyFirstChars:apiKeyStr.substring(0,5),hasAPI_KEY:typeof process.env.API_KEY!=='undefined',hasGEMINI_API_KEY:typeof process.env.GEMINI_API_KEY!=='undefined',apiKeyValue:apiKeyStr===''?'EMPTY_STRING':apiKeyStr.substring(0,10)+'...'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-  // #endregion
   
   // Check for empty string or undefined
   if (!apiKey || (typeof apiKey === 'string' && apiKey.trim() === '')) {
     console.error('[GEMINI API] ERROR: API key is missing or empty!', {
       apiKey,
       apiKeyStr,
-      processEnv: process.env
+      processEnv: process.env,
+      availableKeys: Object.keys(process.env || {}).filter(k => k.includes('API') || k.includes('GEMINI') || k.includes('GEMENI'))
     });
-    throw new Error("An API Key must be set. Please set GEMINI_API_KEY environment variable.");
+    throw new Error("An API Key must be set. Please set GEMINI_API_KEY environment variable in .env.local file.");
   }
   return typeof apiKey === 'string' ? apiKey : String(apiKey);
 };
@@ -248,4 +251,150 @@ Provide a thorough answer using the research data provided. Make sure to complet
     },
   });
   return response.text || "No response generated.";
+}
+
+export async function queryResearchDocument(query: string): Promise<{ answer: string; relevantSections: string[] }> {
+  try {
+    const ai = getAI();
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: `You are analyzing a comprehensive research document about chip topologies and compute infrastructure. Answer the following question based on the research document content.
+
+Question: ${query}
+
+Provide:
+1. A concise overview paragraph (2-3 sentences, ~50 words)
+2. Key points as bullet points (4-6 bullets, ~150-200 words total)
+3. List 3-5 relevant sections or topics from the document
+
+Format your response as JSON with this structure:
+{
+  "answer": "Brief overview paragraph here.\n\n• First key point\n• Second key point\n• Third key point\n• Fourth key point",
+  "relevantSections": ["Section 1", "Section 2", "Section 3"]
+}
+
+Keep the total answer length around 200-300 words with a short paragraph followed by clear bullet points.`,
+      config: {
+        responseMimeType: "application/json",
+        maxOutputTokens: 2000,
+      },
+    });
+
+    try {
+      const parsed = JSON.parse(response.text || '{}');
+      return {
+        answer: parsed.answer || "No answer found.",
+        relevantSections: parsed.relevantSections || []
+      };
+    } catch (e) {
+      return {
+        answer: response.text || "No answer found.",
+        relevantSections: []
+      };
+    }
+  } catch (error: any) {
+    // Re-throw with more context for better error handling
+    if (error?.message?.includes('API key') || error?.message?.includes('403') || error?.message?.includes('PERMISSION_DENIED')) {
+      throw new Error(`API Key Error: ${error.message || 'Invalid or missing API key. Please check your GEMINI_API_KEY in .env.local'}`);
+    }
+    throw error;
+  }
+}
+
+export async function queryResearchDocumentChat(
+  originalQuery: string,
+  originalAnswer: string,
+  conversationHistory: Array<{ role: 'user' | 'assistant'; content: string }>,
+  currentMessage: string
+): Promise<string> {
+  try {
+    const ai = getAI();
+    
+    // Build conversation context with original query and answer
+    let conversationContext = `You are an AI assistant helping users explore a comprehensive research document about chip topologies and compute infrastructure.
+
+The user initially asked: "${originalQuery}"
+
+You provided this initial answer:
+"${originalAnswer}"
+
+Now the user wants to dive deeper and ask follow-up questions. Maintain context from the original query and answer, and provide helpful, detailed responses based on the research document content.
+
+Conversation history:
+`;
+
+    // Add conversation history (limit to last 20 messages to avoid token limits)
+    const recentHistory = conversationHistory.slice(-20);
+    recentHistory.forEach((msg) => {
+      const roleLabel = msg.role === 'user' ? 'User' : 'Assistant';
+      conversationContext += `\n${roleLabel}: ${msg.content}\n`;
+    });
+
+    conversationContext += `\n\nCurrent user question: ${currentMessage}
+
+Provide a helpful, detailed response that builds on the conversation context and the research document. Format your response in a clear, readable way with:
+- Short paragraphs (2-3 sentences each)
+- Bullet points for key information
+- Clear structure and easy-to-scan formatting
+
+Also suggest 3-4 follow-up questions the user might want to ask to learn more about this topic. Format your response as JSON:
+
+{
+  "content": "Your detailed response here with paragraphs and bullets...",
+  "suggestedQuestions": ["Question 1", "Question 2", "Question 3", "Question 4"]
+}`;
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: conversationContext,
+      config: {
+        responseMimeType: "application/json",
+        maxOutputTokens: 2000,
+      },
+    });
+
+    try {
+      const parsed = JSON.parse(response.text || '{}');
+      return JSON.stringify({
+        content: parsed.content || response.text || "Sorry, I couldn't generate a response. Please try again.",
+        suggestedQuestions: parsed.suggestedQuestions || []
+      });
+    } catch (e) {
+      // Fallback if JSON parsing fails
+      return JSON.stringify({
+        content: response.text || "Sorry, I couldn't generate a response. Please try again.",
+        suggestedQuestions: []
+      });
+    }
+  } catch (error: any) {
+    // Re-throw with more context for better error handling
+    if (error?.message?.includes('API key') || error?.message?.includes('403') || error?.message?.includes('PERMISSION_DENIED')) {
+      throw new Error(`API Key Error: ${error.message || 'Invalid or missing API key. Please check your GEMINI_API_KEY in .env.local'}`);
+    }
+    throw error;
+  }
+}
+
+export async function explainInPlainTerms(selectedText: string): Promise<string> {
+  const ai = getAI();
+  const response = await ai.models.generateContent({
+    model: "gemini-3-flash-preview",
+    contents: `You are explaining technical concepts from a chip topology research document to someone who wants to understand it in very plain, simple terms. 
+
+The user has selected this text: "${selectedText}"
+
+Explain what this means in plain, simple language:
+- Use everyday analogies when possible
+- Avoid jargon or explain jargon when you must use it
+- Keep it concise (2-4 sentences)
+- Make it accessible to someone without a technical background
+- Focus on what it means and why it matters
+
+Just provide the explanation directly, no JSON formatting needed.`,
+    config: {
+      maxOutputTokens: 500,
+    },
+  });
+
+  return response.text || "Sorry, I couldn't generate an explanation. Please try again.";
 }
