@@ -56,10 +56,12 @@ export const Card: React.FC<CardProps> = ({ segment, analysis, onClick }) => {
 
   return (
     <div 
-      className="group relative overflow-hidden rounded-xl transition-all duration-300 flex flex-col backdrop-blur-xl border border-zinc-800/50 bg-zinc-900/50 cursor-pointer"
+      className="group relative overflow-hidden rounded-xl transition-all duration-300 flex flex-col backdrop-blur-xl border border-zinc-800/50 bg-zinc-900/50 cursor-pointer hover:scale-[1.02] hover:shadow-xl hover:border-zinc-700/60"
       style={{
         backdropFilter: 'blur(20px)',
         WebkitBackdropFilter: 'blur(20px)',
+        transform: 'translateZ(0)',
+        willChange: 'transform'
       }}
       onClick={handleCardClick}
     >

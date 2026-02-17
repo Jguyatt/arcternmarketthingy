@@ -426,6 +426,7 @@ export const Home: React.FC<HomeProps> = ({ onEnter }) => {
                   setIsTransitioning(true);
                   setTimeout(() => {
                     onEnter('grid');
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                   }, 600);
                 }}
                 disabled={isTransitioning}
@@ -698,6 +699,7 @@ export const Home: React.FC<HomeProps> = ({ onEnter }) => {
                 setIsTransitioning(true);
                 setTimeout(() => {
                   onEnter('grid');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }, 600);
               }}
               disabled={isTransitioning}
