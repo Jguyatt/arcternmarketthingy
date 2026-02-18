@@ -717,8 +717,6 @@ export const Home: React.FC<HomeProps> = ({ onEnter }) => {
             
             <div className="flex items-center gap-6 opacity-60 scroll-section scroll-fade-up" style={{ transitionDelay: '0.4s' }}>
               <span className="font-mono text-xs tracking-[0.2em] uppercase text-zinc-400">Proprietary Assets of RCVC</span>
-              <div className="w-[1px] h-4 bg-zinc-700"></div>
-              <span className="font-mono text-xs tracking-[0.2em] uppercase text-zinc-400">Security Clearance Level 4</span>
             </div>
           </div>
         </div>
