@@ -6,10 +6,14 @@ import { DetailModal } from './components/DetailModal';
 import { LandscapeOverview } from './components/LandscapeOverview';
 import { Home } from './components/Home';
 import { Research } from './components/Research';
+import { InferenceCostModel } from './components/InferenceCostModel';
+import { InferenceCostSpreadsheetPage } from './components/InferenceCostSpreadsheetPage';
 import { INITIAL_RESEARCH } from './initialData';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<'home' | 'grid' | 'landscape' | 'research'>('home');
+  const [view, setView] = useState<
+    'home' | 'grid' | 'landscape' | 'research' | 'inferenceCost' | 'inferenceCostSpreadsheet'
+  >('home');
   const [selectedSegment, setSelectedSegment] = useState<ComputeSegment | null>(null);
   const [savedResearch, setSavedResearch] = useState<SavedResearch>({});
   const [initialSearchQuery, setInitialSearchQuery] = useState<string | null>(null);
@@ -196,14 +200,68 @@ const App: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Stage 2 */}
-                  <button 
-                    disabled
-                    className="px-5 py-2.5 rounded-lg text-sm font-medium text-zinc-600 cursor-not-allowed flex items-center gap-2 border border-zinc-800/30 bg-zinc-900/20"
-                  >
-                    <span>Stage 2</span>
-                    <span className="text-xs px-2.5 py-1 bg-zinc-800/50 rounded-md text-zinc-500 font-medium">Coming Soon</span>
-                  </button>
+                  {/* Stage 2 Dropdown */}
+                  <div className="relative group">
+                    <button
+                      type="button"
+                      className={`px-5 py-2.5 rounded-lg text-sm font-medium text-white hover:bg-zinc-900/60 transition-all flex items-center gap-2 border ${
+                        view === 'inferenceCost' || view === 'inferenceCostSpreadsheet'
+                          ? 'bg-zinc-800/50 border-zinc-700 border-l-2 border-l-[#D1623C]'
+                          : 'border-transparent hover:border-zinc-800'
+                      }`}
+                    >
+                      <span>Stage 2</span>
+                      <svg className="w-4 h-4 transition-transform duration-200 group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                    <div className="absolute top-full left-0 mt-2 w-72 bg-zinc-900/95 backdrop-blur-xl border border-zinc-800/50 rounded-xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 overflow-hidden">
+                      <div className="py-1.5">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setView('inferenceCost');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={`w-full px-4 py-3 flex items-center gap-3 text-sm text-left transition-all ${
+                            view === 'inferenceCost'
+                              ? 'bg-zinc-800/50 text-white border-l-2 border-[#D1623C]'
+                              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40'
+                          }`}
+                          style={{ fontFamily: 'Inter, sans-serif' }}
+                        >
+                          <svg className="w-5 h-5 flex-shrink-0 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                          </svg>
+                          <span>
+                            <span className="font-medium block">Model workspace</span>
+                            <span className="text-xs text-zinc-500 font-normal">Tabbed inputs &amp; results</span>
+                          </span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setView('inferenceCostSpreadsheet');
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                          }}
+                          className={`w-full px-4 py-3 flex items-center gap-3 text-sm text-left transition-all ${
+                            view === 'inferenceCostSpreadsheet'
+                              ? 'bg-zinc-800/50 text-white border-l-2 border-[#D1623C]'
+                              : 'text-zinc-400 hover:text-white hover:bg-zinc-800/40'
+                          }`}
+                          style={{ fontFamily: 'Inter, sans-serif' }}
+                        >
+                          <svg className="w-5 h-5 flex-shrink-0 text-zinc-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M3 14h18m-9-4v8m-7 0h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                          </svg>
+                          <span>
+                            <span className="font-medium block">Full spreadsheet view</span>
+                            <span className="text-xs text-zinc-500 font-normal">All five sheets on one page</span>
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </nav>
             </div>
 
@@ -356,6 +414,18 @@ const App: React.FC = () => {
         {view === 'research' && (
           <div className="page-fade-in">
             <Research initialSearchQuery={initialSearchQuery} onSearchComplete={() => setInitialSearchQuery(null)} />
+          </div>
+        )}
+
+        {view === 'inferenceCost' && (
+          <div className="page-fade-in">
+            <InferenceCostModel />
+          </div>
+        )}
+
+        {view === 'inferenceCostSpreadsheet' && (
+          <div className="page-fade-in">
+            <InferenceCostSpreadsheetPage />
           </div>
         )}
       </main>
