@@ -8,11 +8,12 @@ import { Home } from './components/Home';
 import { Research } from './components/Research';
 import { InferenceCostModel } from './components/InferenceCostModel';
 import { InferenceCostSpreadsheetPage } from './components/InferenceCostSpreadsheetPage';
+import { Thesis } from './components/Thesis';
 import { INITIAL_RESEARCH } from './initialData';
 
 const App: React.FC = () => {
   const [view, setView] = useState<
-    'home' | 'grid' | 'landscape' | 'research' | 'inferenceCost' | 'inferenceCostSpreadsheet'
+    'home' | 'grid' | 'landscape' | 'research' | 'inferenceCost' | 'inferenceCostSpreadsheet' | 'thesis'
   >('home');
   const [selectedSegment, setSelectedSegment] = useState<ComputeSegment | null>(null);
   const [savedResearch, setSavedResearch] = useState<SavedResearch>({});
@@ -262,6 +263,23 @@ const App: React.FC = () => {
                       </div>
                     </div>
                   </div>
+
+                  {/* Stage 3 */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setView('thesis');
+                      window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}
+                    className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-all flex items-center gap-2 border ${
+                      view === 'thesis'
+                        ? 'text-white bg-zinc-800/50 border-zinc-700 border-l-2 border-l-[#D1623C]'
+                        : 'text-white hover:bg-zinc-900/60 border-transparent hover:border-zinc-800'
+                    }`}
+                  >
+                    <span>Stage 3</span>
+                    <span className="text-xs px-2.5 py-1 bg-[#D1623C]/15 text-[#D1623C] rounded-md font-medium">Thesis</span>
+                  </button>
                 </nav>
             </div>
 
@@ -418,14 +436,66 @@ const App: React.FC = () => {
         )}
 
         {view === 'inferenceCost' && (
-          <div className="page-fade-in">
+          <div className="page-fade-in space-y-16">
             <InferenceCostModel />
+            <div className="max-w-6xl mx-auto border-t border-zinc-800/50 pt-16 pb-8 flex flex-col items-center gap-6 text-center">
+              <p className="text-xs font-mono uppercase tracking-[0.35em] text-zinc-500">Continue to Stage 3</p>
+              <h3 className="text-2xl font-light text-white tracking-tight" style={{ fontFamily: 'Inter, sans-serif' }}>
+                Investment <span className="text-[#D1623C] font-semibold">thesis</span>
+              </h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setView('thesis');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="group relative overflow-hidden px-12 py-5 bg-transparent text-white border-2 border-zinc-700 hover:border-[#D1623C]/60 transition-all duration-500 active:scale-95"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-[#D1623C] to-[#D1623C]/90 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]" />
+                <span className="relative z-10 text-sm font-semibold uppercase tracking-[0.3em] flex items-center gap-3">
+                  Open thesis
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </span>
+              </button>
+            </div>
           </div>
         )}
 
         {view === 'inferenceCostSpreadsheet' && (
-          <div className="page-fade-in">
+          <div className="page-fade-in space-y-16">
             <InferenceCostSpreadsheetPage />
+            <div className="max-w-[1900px] mx-auto border-t border-zinc-800/50 pt-16 pb-8 flex flex-col items-center gap-6 text-center">
+              <p className="text-xs font-mono uppercase tracking-[0.35em] text-zinc-500">Continue to Stage 3</p>
+              <button
+                type="button"
+                onClick={() => {
+                  setView('thesis');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                className="group relative overflow-hidden px-12 py-5 bg-transparent text-white border-2 border-zinc-700 hover:border-[#D1623C]/60 transition-all duration-500 active:scale-95"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-[#D1623C] to-[#D1623C]/90 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-[cubic-bezier(0.19,1,0.22,1)]" />
+                <span className="relative z-10 text-sm font-semibold uppercase tracking-[0.3em] flex items-center gap-3">
+                  Open thesis
+                  <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {view === 'thesis' && (
+          <div className="page-fade-in">
+            <Thesis
+              onNavigateStage={(v) => {
+                setView(v);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
           </div>
         )}
       </main>
